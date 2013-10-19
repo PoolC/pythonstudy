@@ -4,6 +4,9 @@ import pygame.sprite
 from gameobject.utility import load_json
 from gameobject.enemy import Enemy
 
+def coordfromindex(index):
+    return (40+index[0]*40, 20+index[1]*40)
+
 class EnemySpawner(object):
 
     def __init__(self, enemygroup):
