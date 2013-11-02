@@ -1,6 +1,7 @@
 #coding:utf-8
 import os
 import pygame
+import locale
 from pygame.locals import *
 from pygame.compat import geterror
 import __main__
@@ -8,12 +9,16 @@ import json
 
 main_dir = os.path.split(os.path.abspath(__main__.__file__))[0]
 data_dir = os.path.join(main_dir, 'data')
+system_encoding = locale.getpreferredencoding()
 
 # 이미지 리소스 로딩하기
 def load_image(name, colorkey=None):
-    fullname = os.path.join(data_dir, name)
+    fullname = unicode(os.path.join(data_dir, name).decode(system_encoding))
     try:
-        image = pygame.image.load(fullname)
+        f = open(fullname, 'rb')
+        content = f.read()
+        f.seek(0)
+        image = pygame.image.load(f, fullname.encode('utf-8'))
     except pygame.error:
         print ('Cannot load image:', fullname)
         raise SystemExit(str(geterror()))
