@@ -1,4 +1,5 @@
 #coding:utf-8
+from sprite import SpriteComponent
 from utility import component, Component
 import pygame
 from pygame.locals import *
@@ -21,9 +22,29 @@ class DisplayComponent(Component):
         self._screen = screen
         self._background = background
         self._world = None
+        self._default_render_group = pygame.sprite.RenderPlain()
+        
         
     def _handle_set_world(self, sender, msgargs):
         self._world = sender
+        
+    def _handle_spawn(self, sender, msgargs):
+        entity = msgargs
+        
+        # Create a sprite component for 'entity'
+        sprite = SpriteComponent(self.sendto(entity, 'sprite_name'))
+        
+        # Attach it to 'entity'
+        self.sendto(entity, 'attach', sprite)
+        
+        # Get the position of 'entity'
+        pos = self.sendto(entity, 'pos')
+        
+        # Move the sprite to the position 'pos'
+        sprite.sprite.rect.midbottom = pos
+        
+        # Register the pygame sprite object to the default render group
+        self._default_render_group.add(sprite.sprite)
         
     def tick(self):
         # Handle Input Events
@@ -37,4 +58,5 @@ class DisplayComponent(Component):
                 
         # Draw everything
         self._screen.blit(self._background, (0, 0))
+        self._default_render_group.draw(self._screen)
         pygame.display.flip()

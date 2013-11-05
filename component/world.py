@@ -17,6 +17,9 @@ class WorldComponent(Component):
             self._entities[id(sender)] = sender
             print 'Spawn completed at %s.' % str(self.sendto(sender, 'pos'))
             
+            if self._frontend:
+                self.sendto(self._frontend, 'spawn', sender)
+            
     def _handle_set_frontend(self, sender, msgargs):
         self._frontend = sender
         self.sendto(sender, 'set_world')

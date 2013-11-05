@@ -28,6 +28,9 @@ class Entity(object):
         
         return self
         
+    def _handle_attach(self, sender, msgargs):
+        self.attach(msgargs)
+        
     def components(self):
         c = self
         while c._nextcomp is not None:
@@ -39,15 +42,15 @@ class Entity(object):
         
     def _handle(self, sender, msg, msgargs):
         c = self
-        while c._nextcomp is not None:
-            c = c._nextcomp
+        while c is not None:
             try:
                 handler = getattr(c, '_handle_' + msg)
             except AttributeError:
                 handler = None
             if handler:
                 return handler(sender, msgargs)
-
+            c = c._nextcomp
+            
         return None
 
     
