@@ -37,9 +37,20 @@ class PygameSprite(pygame.sprite.Sprite):
 
 @component()
 class SpriteComponent(Component):
-    def __init__(self, filename):
+    def __init__(self, filename, display):
         Component.__init__(self)
         self.sprite = PygameSprite(filename)
+        self._display = display
+        
+    def _handle_sprite_teleport_x(self, sender, msgargs):
+        x = msgargs
+        cam_pos = self.sendto(self._display, 'cam_pos')
+        self.sprite.rect.midbottom = (x - cam_pos[0], self.sprite.rect.midbottom[1])
+        
+    def _handle_sprite_teleport_y(self, sender, msgargs):
+        y = msgargs
+        cam_pos = self.sendto(self._display, 'cam_pos')
+        self.sprite.rect.midbottom = (self.sprite.rect.midbottom[0], y - cam_pos[1])
         
     def tick(self):
         pass

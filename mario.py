@@ -4,27 +4,31 @@ from entity import Entity
 from component.world import WorldComponent
 from component.display import DisplayComponent
 from component.data import DataComponent
+from component.fall import FallComponent
 from component.camera import CameraComponent
 from component.utility import tickall, QuitRequestFromFrontend
 
 if __name__ == '__main__':        
     # Create the world
     world = Entity()\
-    .attach(WorldComponent())\
+    .attach(WorldComponent('mapdata.txt'))\
     .channel
 
     # Create the player
     player = Entity()\
-    .attach(DataComponent('player', (50,100), 'mario.png'))\
+    .attach(DataComponent('player', (40*1,40*8), 'mario.png'))\
+    .attach(FallComponent())\
     .channel
 
     # Create an enemy
     enemy = Entity()\
-    .attach(DataComponent('goomba', (200,100), 'goomba.png'))\
+    .attach(DataComponent('goomba', (40*5,40*5), 'goomba.png'))\
+    .attach(FallComponent())\
     .channel
     
     enemy2 = Entity()\
-    .attach(DataComponent('flower', (300,100), 'flower.png'))\
+    .attach(DataComponent('flower', (40*8,40*14), 'flower.png'))\
+    .attach(FallComponent())\
     .channel
     
     # Create a camera
@@ -36,13 +40,6 @@ if __name__ == '__main__':
     display = Entity()\
     .attach(DisplayComponent())\
     .channel
-
-    '''
-    # Create a tree
-    tree = Entity()\
-    .attach(DataComponent('i \'m tree!', (150,0)))\
-    .channel
-    '''
     
     # Display subsystem
     display.sendto(world, 'set_frontend')
@@ -50,6 +47,7 @@ if __name__ == '__main__':
     
     # Logic subsystem
     player.sendto(world, 'spawn_me')
+    player.sendto(world, 'i_am_player')
     enemy.sendto(world, 'spawn_me')
     enemy2.sendto(world, 'spawn_me')
     
